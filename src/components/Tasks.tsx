@@ -24,6 +24,11 @@ function Tasks() {
   return (
     <>
       <div className="px-2">
+        <button className="btn btn-primary mt-4" onClick={() => {
+          document.getElementById("my_modal_1").showModal()
+        }}>
+          Crear Tarea
+        </button>
         <div className=" mt-10 overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
           <table className="table">
             {/* head */}
@@ -58,19 +63,24 @@ function Tasks() {
         </div>
       </div>
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">
-            Press ESC key or click the button below to close
-          </p>
-          <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Close</button>
+        <div className="modal-box" style={{ maxWidth: "400px" }}>
+          <h3 className="font-bold text-lg">Crear tarea</h3>
+          <div className="modal-action" >
+            <form method="dialog" className="w-full">
+              <div className="flex flex-col gap-2 justify-center items-center w-full">
+                <input type="text" placeholder="Titulo" className="input input-bordered w-full max-w-xs" />
+                <input type="text" placeholder="Estado" className="input input-bordered w-full max-w-xs" />
+                <input type="text" placeholder="Descripcion" className="input input-bordered w-full max-w-xs" />
+                <input type="date" placeholder="Fecha Limite" className="input input-bordered w-full max-w-xs" />
+                <div className="w-full flex justify-around mt-4">
+                  <button className="btn text-white ">Close</button>
+                  <button className="btn text-white " type="submit">Close</button>
+                </div>
+              </div>
             </form>
           </div>
         </div>
-      </dialog>
+      </dialog >
 
       <button
         onClick={() => {

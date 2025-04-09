@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,18 +18,25 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Creando una llamada utilizando fetch api
-    const response = await fetch("http://localhost:3000/users/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      localStorage.setItem("token", data.token);
-      navigate("/tasks");
-    } else {
-      alert(data.message);
+    setErrorMessage(""); // Clear previous errors
+    
+    try {
+      // Creando una llamada utilizando fetch api
+      const response = await fetch("http://localhost:3000/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        navigate("/tasks");
+      } else {
+        setErrorMessage(data.message || "Error al iniciar sesión");
+      }
+    } catch (error) {
+      setErrorMessage("Error de conexión. Intente nuevamente.");
+      console.error("Login error:", error);
     }
   };
 
@@ -38,6 +46,12 @@ function Login() {
         onSubmit={handleSubmit}
         className="max-w-md mx-auto mt-10 rounded-lg"
       >
+        {errorMessage && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {errorMessage}
+          </div>
+        )}
+        
         <fieldset className="fieldset w-xs mx-auto bg-base-200 border border-base-300 p-4 rounded-box">
           <legend className="fieldset-legend text-2xl">Iniciar Sesion</legend>
 
