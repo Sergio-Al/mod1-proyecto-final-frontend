@@ -1,19 +1,28 @@
 import { Navigate } from 'react-router-dom';
 import React from 'react';
-import Header from './Header'; // Import the Header component
+import { MainLayout } from '../shared/layouts/MainLayout';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  title?: string;
+}
+
+function ProtectedRoute({ children, title = 'Gestor de Tareas' }: ProtectedRouteProps) {
   const token = localStorage.getItem('token');
 
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
+
   return (
-    <>
-      <Header />
+    <MainLayout title={title} onLogout={handleLogout}>
       {children}
-    </>
+    </MainLayout>
   );
 }
 
