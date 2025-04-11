@@ -2,6 +2,10 @@ import { Task, TaskStatus } from "../types";
 import { CiEdit } from "react-icons/ci";
 import { CiCircleRemove } from "react-icons/ci";
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 interface TaskListProps {
   tasks: Task[];
@@ -188,18 +192,17 @@ export const TaskList: React.FC<TaskListProps> = ({
 
 // Funcion auxiliar para formatear la fecha
 const formatDate = (dateString: string): string => {
-  try {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("es-ES", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(date);
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return dateString;
-  }
+  if (!dateString) return "Sin fecha";
+  
+  // Extract just the date portion (YYYY-MM-DD) from the ISO string
+  const datePart = dateString.split('T')[0];
+  const date = dayjs(datePart);
+  
+  if (!date.isValid()) return "Sin fecha";
+  return date.format("DD/MM/YYYY");
 };
+// console.log("Original date string:", dateString);
+// console.log("Formatted date:", date.format("DD/MM/YYYY"));
 
 const getStatusBadgeClass = (status: string): string => {
   switch (status.toLowerCase()) {

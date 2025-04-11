@@ -5,6 +5,7 @@ import { TaskList } from "./TaskList";
 import { Task } from "../types";
 import DeleteTask from "./DeleteTask";
 import { CiCirclePlus } from "react-icons/ci";
+import dayjs from "dayjs";
 
 export const TasksPage = () => {
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -20,6 +21,7 @@ export const TasksPage = () => {
     deleteTask,
     handleSearch,
     handleStatusChange,
+    handleDateChange,
   } = useTasks();
 
   const handleOpenModal = () => {
@@ -98,6 +100,21 @@ export const TasksPage = () => {
             className="input input-bordered"
             onChange={(e) => {
               handleSearch(e.target.value);
+            }}
+          />
+        </div>
+        <div className="form-control">
+          <input
+            type="date"
+            placeholder="Buscar por fecha..."
+            className="input input-bordered"
+            onChange={(e) => {
+              if(!e.target.value) {
+                handleDateChange(null);
+                return;
+              }
+              const selectedDate = dayjs(e.target.value).toDate();
+              handleDateChange(selectedDate);
             }}
           />
         </div>

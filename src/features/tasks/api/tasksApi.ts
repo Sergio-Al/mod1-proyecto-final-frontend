@@ -1,16 +1,27 @@
 import { Task } from '../types';
 import { env } from '../../../shared/config/env';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 const API_URL = env.API_URL;
 
 export const tasksApi = {
-  fetchTasks: async ({ search, status }: { search?: string | null, status?: string | null }): Promise<Task[]> => {
+  fetchTasks: async ({ search, status, date }: { search?: string | null, status?: string | null, date?: Date | null }): Promise<Task[]> => {
     const token = localStorage.getItem("token");
+    let formattedDate = null;
+
+    if (date) {
+      formattedDate = dayjs(date).format('YYYY-MM-DD');
+    }
+
     const params = new URLSearchParams({
       search: search || '',
       status: status || '',
+      date: formattedDate || '',
     });
-    
+
     const response = await fetch(`${API_URL}/tareas?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
       method: "GET"

@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { tasksApi } from '../api/tasksApi';
 import { Task } from '../types';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -9,6 +13,7 @@ export const useTasks = () => {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>();
   const [search, setSearch] = useState<string | null>(null);
+  const [date, setDate] = useState<Date | null>(null);
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -17,8 +22,8 @@ export const useTasks = () => {
       const data = await tasksApi.fetchTasks({
         search,
         status,
+        date,
       });
-      console.log(search, status, data);
       setTasks(data);
     } catch (err) {
       setError('Failed to fetch tasks');
@@ -82,15 +87,19 @@ export const useTasks = () => {
   const handleStatusChange = (status: string) => {
     setStatus(status);
   };
+
+  const handleDateChange = (date: Date | null) => {
+    setDate(date);
+  };
   const handleResetFilters = () => {
     setSearch(null);
     setStatus(null);
+    setDate(null);
   };
 
   useEffect(() => {
-    console.log('cambio...')
     fetchTasks();
-  }, [search, status]);
+  }, [search, status, date]);
 
   return {
     tasks,
@@ -105,5 +114,6 @@ export const useTasks = () => {
     handleSearch,
     handleStatusChange,
     handleResetFilters,
+    handleDateChange,
   };
 };

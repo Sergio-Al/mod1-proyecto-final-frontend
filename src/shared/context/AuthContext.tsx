@@ -41,7 +41,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (storedToken) {
       try {
         const decoded = jwtDecode<TokenPayload>(storedToken);
-        console.log("Decoded token:", storedToken, decoded);
         const currentTime = Date.now() / 1000;
 
         if (decoded.exp > currentTime) {
