@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../shared/context/AuthContext";
+import { env } from "../shared/config/env";
+
+const API_URL = env.API_URL;
 
 interface LoginCredentials {
   email: string;
@@ -43,7 +46,7 @@ function Login() {
     setErrorMessage(""); // Clear previous errors
     
     try {
-      const response = await fetch("http://localhost:3000/users/login", {
+      const response = await fetch(`${API_URL}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
