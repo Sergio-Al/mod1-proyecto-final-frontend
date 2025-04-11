@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Task } from '../types';
-import { useAuth } from '../../../shared/context/AuthContext';
+import { useState, useEffect } from "react";
+import { Task } from "../types";
+import { useAuth } from "../../../shared/context/AuthContext";
 
 interface CreateTaskProps {
   task: Task | null;
@@ -18,15 +18,20 @@ export const CreateTask = ({ task, onSubmit, onCancel }: CreateTaskProps) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  console.log(userId)
-
-  // Set form values when editing an existing task
+  // Establecemos el estado inicial del formulario
   useEffect(() => {
     if (task) {
       setTitulo(task.titulo || "");
       setDescripcion(task.descripcion || "");
       setEstado(task.estado || "");
-      setFechaLimite(task.fecha_limite || "");
+      if (task.fecha_limite) {
+        // Convertimos la fecha a un formato adecuado
+        const date = new Date(task.fecha_limite);
+        const formattedDate = date.toISOString().split("T")[0];
+        setFechaLimite(formattedDate);
+      } else {
+        setFechaLimite("");
+      }
       setIsEditing(true);
     } else {
       resetForm();
@@ -42,25 +47,24 @@ export const CreateTask = ({ task, onSubmit, onCancel }: CreateTaskProps) => {
     setErrorMessage("");
   };
 
-//   o Solo se puede marcar como "en progreso" si está en "pendiente".
-// o No se puede volver a "pendiente" desde "en progreso" o "completada".
-// o Una vez "completada", no se puede modificar (solo eliminar).
   const onEstadoChange = (value: string) => {
     setErrorMessage("");
-    let prevValue = ''
+    let prevValue = "";
     if (isEditing) {
-      prevValue = task?.estado || ''
+      prevValue = task?.estado || "";
     }
-    if(prevValue === 'En Progreso' && value === 'Pendiente') {
+    if (prevValue === "En Progreso" && value === "Pendiente") {
       setErrorMessage("No puedes volver a Pendiente una tarea en progreso");
       return;
     }
-    if(prevValue === 'Completada' && value !== 'Completada') {
+    if (prevValue === "Completada" && value !== "Completada") {
       setErrorMessage("No puedes modificar una tarea completada");
       return;
     }
-    if (prevValue === 'Pendiente' && value === 'En Progreso') {
-      setErrorMessage("No puedes marcar una tarea como en progreso");
+    if (prevValue === "Pendiente" && value === "Completada") {
+      setErrorMessage(
+        "No puedes marcar una tarea como completada desde Pendiente"
+      );
       return;
     }
     setEstado(value);
@@ -68,13 +72,13 @@ export const CreateTask = ({ task, onSubmit, onCancel }: CreateTaskProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
+
+    // Validación de campos
     if (!titulo.trim()) {
       setErrorMessage("El título es requerido");
       return;
     }
-    
+
     try {
       const taskData: Task = {
         ...(task?.id ? { id: task.id } : {}),
@@ -82,12 +86,12 @@ export const CreateTask = ({ task, onSubmit, onCancel }: CreateTaskProps) => {
         descripcion,
         estado,
         fecha_limite,
-        usuarioId: task?.usuarioId || userId || 0
+        usuarioId: task?.usuarioId || userId || 0,
       };
-      
+
       await onSubmit(taskData);
       resetForm();
-      onCancel(); // Close the modal
+      onCancel(); // Cerrar el modal después de guardar
     } catch (err) {
       console.error("Failed to save task:", err);
       setErrorMessage("Error al guardar la tarea");
@@ -117,12 +121,14 @@ export const CreateTask = ({ task, onSubmit, onCancel }: CreateTaskProps) => {
             />
 
             <label className="fieldset-label">Estado</label>
-            <select 
+            <select
               value={estado}
               onChange={(e) => onEstadoChange(e.target.value)}
               className="select w-full"
             >
-              <option value="" disabled>Seleccione un estado</option>
+              <option value="" disabled>
+                Seleccione un estado
+              </option>
               <option value="Pendiente">Pendiente</option>
               <option value="En Progreso">En Progreso</option>
               <option value="Completada">Completada</option>
@@ -159,4 +165,4 @@ export const CreateTask = ({ task, onSubmit, onCancel }: CreateTaskProps) => {
       </div>
     </div>
   );
-}
+};

@@ -18,6 +18,8 @@ export const TasksPage = () => {
     updateTask,
     selectTask,
     deleteTask,
+    handleSearch,
+    handleStatusChange,
   } = useTasks();
 
   const handleOpenModal = () => {
@@ -86,12 +88,38 @@ export const TasksPage = () => {
         </div>
       )}
 
+      {/* // filter by Estado (status) and 
+      // search by Titulo (title) */}
+      <div className="flex justify-between items-center mb-4">
+        <div className="form-control">
+          <input
+            type="text"
+            placeholder="Buscar por título..."
+            className="input input-bordered"
+            onChange={(e) => {
+              handleSearch(e.target.value);
+            }}
+          />
+        </div>
+        <div className="form-control">
+          <select
+            className="select select-bordered"
+            onChange={(e) => {
+              handleStatusChange(e.target.value);
+            }}
+          >
+            <option value="">Filtrar por estado</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Progreso">En Progreso</option>
+            <option value="Completada">Completada</option>
+          </select>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Lista de Tareas</h2>
         <button onClick={handleOpenModal} className="btn btn-primary">
-          <CiCirclePlus
-            className="mr-2 text-2xl"
-          />
+          <CiCirclePlus className="mr-2 text-2xl" />
           Crear Tarea
         </button>
       </div>

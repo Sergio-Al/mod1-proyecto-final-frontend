@@ -7,12 +7,18 @@ export const useTasks = () => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>();
+  const [search, setSearch] = useState<string | null>(null);
 
   const fetchTasks = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await tasksApi.fetchTasks();
+      const data = await tasksApi.fetchTasks({
+        search,
+        status,
+      });
+      console.log(search, status, data);
       setTasks(data);
     } catch (err) {
       setError('Failed to fetch tasks');
@@ -41,7 +47,7 @@ export const useTasks = () => {
   const updateTask = async (task: Task) => {
     try {
       const updatedTask = await tasksApi.updateTask(task);
-      setTasks(prevTasks => 
+      setTasks(prevTasks =>
         prevTasks.map(t => t.id === task.id ? updatedTask : t)
       );
       setSelectedTask(null);
@@ -69,6 +75,23 @@ export const useTasks = () => {
     setSelectedTask(task);
   };
 
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+
+  const handleStatusChange = (status: string) => {
+    setStatus(status);
+  };
+  const handleResetFilters = () => {
+    setSearch(null);
+    setStatus(null);
+  };
+
+  useEffect(() => {
+    console.log('cambio...')
+    fetchTasks();
+  }, [search, status]);
+
   return {
     tasks,
     selectedTask,
@@ -78,6 +101,9 @@ export const useTasks = () => {
     createTask,
     updateTask,
     deleteTask,
-    selectTask
+    selectTask,
+    handleSearch,
+    handleStatusChange,
+    handleResetFilters,
   };
 };

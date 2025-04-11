@@ -2,6 +2,7 @@ import { Task } from "../types";
 
 interface DeleteTaskProps {
   selectedTask: Task | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDelete: (taskId: number) => Promise<any>;
   onCancel: () => void;
 }

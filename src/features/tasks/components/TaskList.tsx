@@ -109,12 +109,14 @@ export const TaskList: React.FC<TaskListProps> = ({
                     <CiEdit /> Editar
                   </button>
                 )}
-                <button
-                  className="btn btn-outline btn-xs text-red-400"
-                  onClick={() => onDeleteTask(task.id)}
-                >
-                  <CiCircleRemove className="text-lg" /> Eliminar
-                </button>
+                {task.estado === TaskStatus.COMPLETED && (
+                  <button
+                    className="btn btn-outline btn-xs text-red-400"
+                    onClick={() => onDeleteTask(task.id)}
+                  >
+                    <CiCircleRemove className="text-lg" /> Eliminar
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -162,14 +164,19 @@ export const TaskList: React.FC<TaskListProps> = ({
                   </div>
                 )}
 
-                <div className="tooltip tooltip-top" data-tip="Eliminar tarea">
-                  <button
-                    className="btn btn-outline text-red-400 btn-sm"
-                    onClick={() => onDeleteTask(task.id)}
+                {task.estado === TaskStatus.COMPLETED && (
+                  <div
+                    className="tooltip tooltip-top"
+                    data-tip="Eliminar tarea"
                   >
-                    <CiCircleRemove className="text-lg" />
-                  </button>
-                </div>
+                    <button
+                      className="btn btn-outline text-red-400 btn-sm"
+                      onClick={() => onDeleteTask(task.id)}
+                    >
+                      <CiCircleRemove className="text-lg" />
+                    </button>
+                  </div>
+                )}
               </td>
             </tr>
           ))}

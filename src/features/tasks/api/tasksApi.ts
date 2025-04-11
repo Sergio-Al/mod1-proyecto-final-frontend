@@ -3,19 +3,25 @@ import { Task } from '../types';
 const API_URL = 'http://localhost:3000';
 
 export const tasksApi = {
-  fetchTasks: async (): Promise<Task[]> => {
+  fetchTasks: async ({ search, status }: { search?: string | null, status?: string | null }): Promise<Task[]> => {
     const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/tareas`, {
-      headers: { Authorization: `Bearer ${token}` },
+    const params = new URLSearchParams({
+      search: search || '',
+      status: status || '',
     });
     
+    const response = await fetch(`${API_URL}/tareas?${params}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      method: "GET"
+    });
+
     if (!response.ok) {
       throw new Error('Failed to fetch tasks');
     }
-    
+
     return response.json();
   },
-  
+
   createTask: async (task: Task): Promise<Task> => {
     const token = localStorage.getItem("token");
     const response = await fetch(`${API_URL}/tareas`, {
@@ -26,17 +32,17 @@ export const tasksApi = {
       },
       body: JSON.stringify(task),
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to create task');
     }
-    
+
     return response.json();
   },
-  
+
   updateTask: async (task: Task): Promise<Task> => {
     if (!task.id) throw new Error('Task ID is required for updates');
-    
+
     const token = localStorage.getItem("token");
     const response = await fetch(`${API_URL}/tareas/${task.id}`, {
       method: "PUT",
@@ -46,14 +52,14 @@ export const tasksApi = {
       },
       body: JSON.stringify(task),
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to update task');
     }
-    
+
     return response.json();
   },
-  
+
   deleteTask: async (taskId: number): Promise<void> => {
     const token = localStorage.getItem("token");
     console.log(taskId)
@@ -63,7 +69,7 @@ export const tasksApi = {
         Authorization: `Bearer ${token}`,
       },
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to delete task');
     }
