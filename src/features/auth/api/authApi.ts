@@ -1,6 +1,7 @@
 import { AuthCredentials, SignupCredentials, AuthResponse } from '../types';
+import { env } from '../../../shared/config/env';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = env.API_URL;
 
 export const authApi = {
   login: async (credentials: AuthCredentials): Promise<AuthResponse> => {

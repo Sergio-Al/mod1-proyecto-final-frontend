@@ -1,6 +1,7 @@
 import { Task } from '../types';
+import { env } from '../../../shared/config/env';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = env.API_URL;
 
 export const tasksApi = {
   fetchTasks: async ({ search, status }: { search?: string | null, status?: string | null }): Promise<Task[]> => {
